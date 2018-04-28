@@ -1,0 +1,3 @@
+package com.publicmethod.androtron.datatron.actions
+
+interface NavigationAction
