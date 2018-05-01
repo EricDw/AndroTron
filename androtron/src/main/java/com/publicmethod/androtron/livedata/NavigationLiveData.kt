@@ -6,6 +6,16 @@ import android.arch.lifecycle.Observer
 import android.support.annotation.MainThread
 import com.publicmethod.androtron.datatron.navigations.Navigation
 
+/**
+ *  Changes to NavigationLiveData can only be observed once.
+ *
+ *  NavigationLiveData does *NOT* store it's value.
+ *
+ *  Therefore [NavigationLiveData.getValue] will always return null.
+ *
+ *  This behavior is intended to communicate the applications need to navigate somewhere to
+ *  interested parties i.e. Activities and Fragments.
+ */
 class NavigationLiveData<N : Navigation> : LiveData<N>() {
 
     @MainThread
@@ -26,8 +36,16 @@ class NavigationLiveData<N : Navigation> : LiveData<N>() {
         })
     }
 
+    /**
+     * Changes the value of this NavigationLiveData
+     *
+     * Changes to the value will not be maintained
+     * therefore [NavigationLiveData.getValue] will always return null.
+     *
+     * @param navigation The [Navigation] that needs to be observed
+     */
     @MainThread
-    fun onNavigation(data: N) {
-        value = data
+    fun onNavigation(navigation: N) {
+        value = navigation
     }
 }
