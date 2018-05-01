@@ -6,7 +6,15 @@ import android.arch.lifecycle.Observer
 import android.support.annotation.MainThread
 
 /**
+ *  Changes to EventLiveData can only be observed once.
  *
+ *  EventLiveData does *NOT* store it's value.
+ *
+ *  Therefore [EventLiveData.getValue] will always return null.
+ *
+ *  This behavior makes it good for one off events like button clicks
+ *
+ *  and other such events that need to be observed.
  */
 open class EventLiveData<T> : LiveData<T>() {
 
@@ -28,8 +36,16 @@ open class EventLiveData<T> : LiveData<T>() {
         })
     }
 
+    /**
+     * Changes the value of this EventLiveData
+     *
+     * Changes to the value will not be maintained
+     * therefore [EventLiveData.getValue] will always return null.
+     *
+     * @param event The event that needs to be observed i.e. a button click
+     */
     @MainThread
-    fun onEvent(data: T) {
-        value = data
+    fun onEvent(event: T) {
+        value = event
     }
 }
