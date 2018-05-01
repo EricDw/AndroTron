@@ -5,6 +5,9 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.support.annotation.MainThread
 
+/**
+ *
+ */
 open class EventLiveData<T> : LiveData<T>() {
 
     @MainThread
