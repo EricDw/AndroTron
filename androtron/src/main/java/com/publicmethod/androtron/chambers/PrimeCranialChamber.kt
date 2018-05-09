@@ -39,9 +39,21 @@ abstract class PrimeCranialChamber<
         Navigator<N> {
 
     //region Override Properties
-    override val viewStateLiveData: LiveData<S> = MediatorLiveData<S>()
-    override val navigationStreamLiveData: LiveData<N> = NavigationLiveData<N>()
-    //endregion
+
+    /**
+     * A [LiveData] object containing the [State]
+     * of the View.
+     */
+    override val viewStateLiveDataStream: LiveData<S> = MediatorLiveData<S>()
+
+    /**
+     * A [LiveData] object containing the [Navigation]s
+     * that need to be performed.
+     * Internally [NavigationLiveData] is used so the [Navigation]
+     * will not be saved therefore preventing odd behavior when resubscribing.
+     */
+    override val navigationLiveDataStream: LiveData<N> = NavigationLiveData()
+    //endregion Override Properties
 
     //region Private Properties
     private val commandStreamLiveData = MediatorLiveData<C>()
@@ -49,21 +61,51 @@ abstract class PrimeCranialChamber<
     //endregion
 
     //region Protected Properties
+    /**
+     * @see BrainCircuits
+     */
     protected abstract val brainCircuits: BrainCircuits<C, A, R, S>
+
+    /**
+     * @see NavigationCircuits
+     */
     protected abstract val navigationCircuits: NavigationCircuits<NC, NA, NAR, N>
     //endregion
 
     //region Override Functions
+
+    /**
+     * Sets the [commandStreamLiveData] value to [command]
+     *
+     * @param command The [Command] to be processed
+     */
     override fun issueCommand(command: C) {
         commandStreamLiveData.value = command
     }
 
+    /**
+     * Sets the [navigationCommandStreamLiveData] value to [navigationCommand]
+     *
+     * @param navigationCommand The [NavigationCommand] to be processed
+     */
     override fun issueNavigationCommand(navigationCommand: NC) {
         navigationCommandStreamLiveData.value = navigationCommand
     }
     //endregion
 
     //region Protected Functions
+
+    /**
+     * Subscribes [brainCircuits] to the [commandStreamLiveData]
+     * so the [Command]s can be processed.
+     *
+     * This function should be called at some point before
+     * the view subscribes to it.
+     *
+     * The reason this function is not called automatically
+     * is to provide flexibility to users using injection libraries
+     * such as Dagger or Koin.
+     */
     protected fun subscribeIntentStreamToIntentStreamLiveData() {
         commandStreamLiveData.observeForever {
             it?.run {
@@ -72,6 +114,17 @@ abstract class PrimeCranialChamber<
         }
     }
 
+    /**
+     * Subscribes [navigationCircuits] to the [navigationCommandStreamLiveData]
+     * so the [NavigationCommand]s can be processed.
+     *
+     * This function should be called at some point before
+     * the view subscribes to it.
+     *
+     * The reason this function is not called automatically
+     * is to provide flexibility to users using injection libraries
+     * such as Dagger or Koin.
+     */
     protected fun subscribeNavigationStreamToNavigationStreamLiveData() {
         navigationCommandStreamLiveData.observeForever {
             it?.run {

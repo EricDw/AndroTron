@@ -6,6 +6,10 @@ import com.publicmethod.androtron.datatron.commands.NavigationCommand
 import com.publicmethod.androtron.datatron.navigations.Navigation
 import com.publicmethod.androtron.datatron.states.State
 
+/**
+ * Defines the interface for interacting with
+ * AndroTrons [PrimeCranialChamber]
+ */
 interface CranialChamber<
         in C : Command,
         S : State,
@@ -14,7 +18,7 @@ interface CranialChamber<
 
     fun issueCommand(command: C)
     fun issueNavigationCommand(navigationCommand: NC)
-    val viewStateLiveData: LiveData<S>
-    val navigationStreamLiveData: LiveData<N>
+    val viewStateLiveDataStream: LiveData<S>
+    val navigationLiveDataStream: LiveData<N>
 
 }
